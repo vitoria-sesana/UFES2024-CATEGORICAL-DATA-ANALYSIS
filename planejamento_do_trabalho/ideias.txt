@@ -1,0 +1,60 @@
+Successive cross-sectional studies
+cross-sectional studies
+
+amostra
+variaveis categoricas
+
+
+tipo de estudo
+amostra: suficientemente grandes
+testes a serem utilizados
+modelagem
+estimações
+analise de residuo
+prevalencia relativa
+modelo logistico para estimar razão de prevalencia
+medidas de associação/efeitos: "razão de chances, razão de prevalência, risco relativo e diferença de risco/risco atribuível"
+tabela de contigência
+
+qual é o cenario/contexto
+qual é o objetivo
+por que é importante realizar o que será feito
+qual é a unidade a ser analisada
+quem se beneficiará com isso
+qual é a importancia do estudo
+	tomada de decisão no publico alvo para ações sociais destinadas a prevenção da saída dos estudantes
+	mapeamento do público evasivo nas instituições sociais
+	analise dos participantes que não conseguem aprovação do certificado e entender as causas
+	no final são aquelas pessoas que mais buscam 
+
+contexto (dados e informações de outras pesquisas, quantidade de pessoas inscritas)
+encceja o que é, importancia para o publico alvo
+problemas
+objetivo do estudo
+os dados (INEP)
+analises iniciais
+quais serao as variaveis a serem utilizadas
+quais associações tem um maior impacto (exposição e efeito)
+	efeito da nota dos participantes do encceja
+	se há exposições que impactam na nota do participante
+	se há exposições que impactam no nível incompleto do participante (ensino médio e ensino fundamental)
+	se PPL ou Pessoas normais influenciam nos resultados finais
+analise descritiva
+
+encceja: Nacional e Exterior, Regular e para Pessoas Privadas de Liberdade (PPL) Há o exterior mas a base disponibiliza apenas dados nacionais.
+certificado para pessoas que não conseguiram concluir o ensino médio e ou o fundamental
+15 anos pra qm n completou o fundamental e 18 o ensino médio
+➢ ENCCEJA Nacional Regular – Exame aplicado no Brasil a jovens sem restrição de
+liberdade
+➢ ENCCEJA Nacional PPL – Exame aplicado no Brasil a pessoas privadas de liberdade e
+jovens sob medidas socioeducativas
+
+
+conclusões
+	estudos longitudinais para identificar padrões de forma mais precisa
+
+When the main interest of the investigator relies on the estimation of an association or risk
+measure adjusted(RR, OR, PR) by covariates or confounders, use of statistical modeling is usually required. In
+epidemiology, several outcomes are binary and logistic regression models are widely applied. Using
+logistic regression models, one can easily estimate OR = exp(β), where β is a parameter related to
+the risk factor of interest
