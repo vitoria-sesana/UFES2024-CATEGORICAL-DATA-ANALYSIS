@@ -30,81 +30,87 @@ path_dicionario <- "dado/bruto/microdados_encceja_2023/DICIONÁRIO/Dicionário_M
 sheets_dicionario <- openxlsx::getSheetNames(path_dicionario); sheets_dicionario  
 
 # dicionarios de cada base de dados
-data_dicionario1 <- readxl::read_xlsx(path_dicionario,
-                                     sheet = sheets_dicionario[1]) %>% # nacional regular
+
+# ENCCEJA NACIONAL REGULAR: cadastro, prova e questionário
+dicRegular <- 
+  readxl::read_xlsx(path_dicionario, sheet = sheets_dicionario[1]) %>% 
   janitor::clean_names() 
 
-data_dicionario2 <- readxl::read_xlsx(path_dicionario,
-                                     sheet = sheets_dicionario[2]) %>% # nacional ppl
+# ENCCEJA NACIONAL PPL: cadastro e prova
+dicPPL <- 
+  readxl::read_xlsx(path_dicionario, sheet = sheets_dicionario[2]) %>% 
   janitor::clean_names()
 
-data_dicionario3 <- readxl::read_xlsx(path_dicionario,
-                                     sheet = sheets_dicionario[3]) %>% # questionario nacional ppl
+# ENCCEJA NACIONAL PPL: questionário socioeconômico
+dicPPLquestionario <- 
+  readxl::read_xlsx(path_dicionario, sheet = sheets_dicionario[3]) %>%
   janitor::clean_names()
 
-# data_dicionario4 <- readxl::read_xlsx(path_dicionario,
-#                                      sheet = sheets_dicionario[4]) %>% # itens prova
-#   janitor::clean_names()
+# Estrutura da prova
+dicProva <- 
+  readxl::read_xlsx(path_dicionario, sheet = sheets_dicionario[4]) %>% 
+   janitor::clean_names()
 
-# nome das variaveis
-colnames1 <- data_dicionario1$dicionario_de_variaveis_encceja_2023 %>% 
+
+# Colunas em cada base ----------------------------------------------------
+
+colRegular <- dicRegular$dicionario_de_variaveis_encceja_2023 %>% 
   na.omit() %>% 
-  as.vector(); colnames1
+  as.vector(); colRegular
 
-colnames2 <- data_dicionario2$dicionario_de_variaveis_encceja_2023 %>% 
+colPPL <- dicPPL$dicionario_de_variaveis_encceja_2023 %>% 
   na.omit() %>% 
-  as.vector(); colnames2
+  as.vector(); colPPL
 
-colnames3 <- data_dicionario3$x2 %>% 
+colPPLquestionario <- dicPPLquestionario$x2 %>% 
   na.omit() %>% 
-  as.vector(); colnames3
+  as.vector(); colPPLquestionario
 
-# colnames4 <- data_dicionario4$itens_prova_encceja_2023 %>% 
-#   na.omit() %>% 
-#   as.vector(); colnames4
+colProva <- dicProva$itens_prova_encceja_2023 %>% 
+  na.omit() %>% 
+  as.vector(); colProva
 
-# dados encceja 2023 ------------------------------------------------------
+# Dados encceja 2023 ------------------------------------------------------
 
-# caminhos
-caminho1 <- "dado/bruto/microdados_encceja_2023/DADOS/MICRODADOS_ENCCEJA_2023_REG_NAC.csv"
-caminho2 <- "dado/bruto/microdados_encceja_2023/DADOS/MICRODADOS_ENCCEJA_2023_PPL_NAC.csv"
-caminho3 <- "dado/bruto/microdados_encceja_2023/DADOS/MICRODADOS_ENCCEJA_2023_PPL_NAC_QSE.csv"
-# caminho4 <- "dado/bruto/microdados_encceja_2023/DADOS/MICRODADOS_ENCCEJA_2023_ITENS_PROVA.csv"
+## Path das bases de dados
+pathRegular <- "dado/bruto/microdados_encceja_2023/DADOS/MICRODADOS_ENCCEJA_2023_REG_NAC.csv"
+pathPPL <- "dado/bruto/microdados_encceja_2023/DADOS/MICRODADOS_ENCCEJA_2023_PPL_NAC.csv"
+pathPPLquestionario <- "dado/bruto/microdados_encceja_2023/DADOS/MICRODADOS_ENCCEJA_2023_PPL_NAC_QSE.csv"
+pathProva <- "dado/bruto/microdados_encceja_2023/DADOS/MICRODADOS_ENCCEJA_2023_ITENS_PROVA.csv"
 
-# datas frames
-data1 <- data.table::fread(caminho1,
+## Bases de dados
+dataRegular <- data.table::fread(pathRegular,
                            nrows = 2000
-                           ) # %>% janitor::clean_names()
+                           ) %>% 
+  janitor::clean_names() %>% 
+  mutate(modalidade_encceja = "Nacional Regular")
 
-data2 <- data.table::fread(caminho2,
+dataPPL <- data.table::fread(pathPPL,
                            nrows = 2000
-                           ) # %>% janitor::clean_names()
+                           ) %>%
+  janitor::clean_names() %>% 
+  mutate(modalidade_encceja = "Nacional PPL")
 
-data3 <- data.table::fread(caminho3,
+dataPPLquestionario <- data.table::fread(pathPPLquestionario,
                            nrows = 2000,
                            ) %>% 
   janitor::clean_names()
 
-# data4 <- data.table::fread(caminho4)
-
-
 # relacionando base Nacional Regular e Nacional PPL -----------------------
 
-col_reg_ppl <- intersect(colnames(data1), colnames(data2)); col_reg_ppl
-# 43 variáveis
+## divisoes da base de dados cadastrais e prova
+colPPL[!colPPL %in% colnames(dataPPL)]
 
-data_dicionario_reg_ppl <- data_dicionario1 %>% 
-  filter(dicionario_de_variaveis_encceja_2023 %in% col_reg_ppl)
+## Variáveis comuns entre Regulares e PPL
+colComunsRegularPPL <- 
+  intersect(x = colnames(dataPPL),
+            y = colnames(dataRegular))
 
-data1$TP_CERTIFICACAO %>% table()
-data1$TP_SEXO %>% table()
+## juntando as bases
 
-data_dicionario_reg
-data_dicionario_ppl
-
-colnames3
+dataRegularPPL <- bind_rows(dataPPL, dataRegular) %>% 
+  select(c(colComunsRegularPPL))
 
 
-data1 %>% 
-  select(-col_reg_ppl) %>% 
-  ncol()
+dataRegular %>% 
+  select(!c(colComunsRegularPPL))
