@@ -6,6 +6,24 @@
 # pacote para estimar razão de prevalencia/prevalence ratio/PR usando regressão logistica
 # devtools::install_github("Raydonal/prLogistic")
 library(prLogistic)
+prLogistic::prLogisticDelta()
+
+prLogisticDelta(survived~ sex + pclass + embarked, 
+                data = titanic, pattern="marginal")
+
+titanic$survived %>% table()
+
+# ex2 
+data("Thailand", package = "prLogistic")
+prLogisticDelta(rgi~  sex + pped + (1|schoolid), data = Thailand, cluster=TRUE)
+
+Thailand$rgi %>% table()
+
+# ex3
+
+data("Thailand", package = "prLogistic")
+prLogisticDelta(rgi~  sex + pped + (1|schoolid),
+data = Thailand, cluster=TRUE)
 
 # epiR --------------------------------------------------------------------
 require(epiR)
