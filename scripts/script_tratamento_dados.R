@@ -24,7 +24,7 @@ library(dplyr)
 # dicionário encceja 2023 -------------------------------------------------
 
 # caminho
-path_dicionario <- "dado/bruto/DICIONÁRIO/Dicionário_Microdados_ENCCEJA_2023.xlsx"
+path_dicionario <- "dado/bruto/microdados_encceja_2023/DICIONÁRIO/Dicionário_Microdados_ENCCEJA_2023.xlsx"
 
 # sheets do arquivo xlsx
 sheets_dicionario <- openxlsx::getSheetNames(path_dicionario); sheets_dicionario  
@@ -73,15 +73,13 @@ colRegular <- dicRegular$dicionario_de_variaveis_encceja_2023 %>%
 # Dados encceja 2023 ------------------------------------------------------
 
 ## Path das bases de dados
-pathRegular <- "dado/bruto/DADOS/MICRODADOS_ENCCEJA_2023_PPL_NAC.csv"
+pathRegular <- "dado/bruto/microdados_encceja_2023/DADOS/MICRODADOS_ENCCEJA_2023_REG_NAC.csv"
 # pathPPL <- "dado/bruto/microdados_encceja_2023/DADOS/MICRODADOS_ENCCEJA_2023_PPL_NAC.csv"
 # pathPPLquestionario <- "dado/bruto/microdados_encceja_2023/DADOS/MICRODADOS_ENCCEJA_2023_PPL_NAC_QSE.csv"
 # pathProva <- "dado/bruto/microdados_encceja_2023/DADOS/MICRODADOS_ENCCEJA_2023_ITENS_PROVA.csv"
  
 ## Bases de dados
-dataRegular <- data.table::fread(pathRegular,
-                           nrows = 200000
-                           ) %>% 
+dataRegular <- data.table::fread(pathRegular) %>% 
   janitor::clean_names() %>% 
   mutate(modalidade_encceja = "Nacional Regular")
  
@@ -244,8 +242,8 @@ dataRegularTratado %>%
   group_by(t_certificado) %>% 
   summarise(qntd = n())
 
-dataRegularTratado  %>% 
-  filter(in_aprovado_mt == 0 & in_prova_mt == 1 & t_certificado == 1) %>% 
-  head(1) %>% 
-  View
-  
+# dataRegularTratado  %>% 
+#   filter(in_aprovado_mt == 0 & in_prova_mt == 1 & t_certificado == 1) %>% 
+#   head(1) %>% 
+#   View
+#   

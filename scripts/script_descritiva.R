@@ -4,6 +4,18 @@
 library(ggplot2)
 
 
+# tabelas -----------------------------------------------------------------
+
+# library(modelsummary)
+# datasummary(Species ~Sepal.Width*(Mean + SD), data=iris)
+
+
+
+# qntd total --------------------------------------------------------------
+dataRegularTratado %>% 
+  nrow()
+
+
 # tipo de certificação ----------------------------------------------------
 dataRegularTratado %>% 
   group_by(tp_certificacao) %>% 
@@ -28,6 +40,9 @@ d_idade <- dataRegularTratado %>%
 
 ggplot(d_idade, aes(t_fx_etaria, qntd)) +
   geom_col(position = "dodge")
+
+
+hist(dataRegularTratado$tp_faixa_etaria)
 
 # proporção certificados homens e mulheres --------------------------------
 x <- dataRegularTratado %>% 
@@ -55,4 +70,24 @@ abline(v = 100, col = "red")
 
 hist(dataRegularTratado$nu_nota_redacao)
 abline(v = 5, col = "red")
+
+
+# associações -------------------------------------------------------------
+
+dataRegularTratado %>% 
+  # filter(in_prova_mt == 1) %>% 
+  group_by(in_prova_mt, t_certificado) %>% 
+  summarise(qntd = n()) %>% 
+  mutate(prop = qntd / sum(qntd))
+
+
+yq12 <- dataRegularTratado %>% 
+  filter(q12 != "") %>% 
+  group_by(t_certificado, q12) %>% 
+  summarise(qntd = n()) %>% 
+  mutate(prop = qntd / sum(qntd)) 
+
+xtabs(qntd ~ q12 + t_certificado, yq12, sparse = TRUE)
+xtabs(prop ~ q12 + t_certificado, yq12, sparse = TRUE)
+
 
