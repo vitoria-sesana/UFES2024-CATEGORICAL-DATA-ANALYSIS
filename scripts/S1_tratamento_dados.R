@@ -24,7 +24,7 @@ library(dplyr)
 # dicionário encceja 2023 -------------------------------------------------
 
 # caminho
-path_dicionario <- "dado/bruto/microdados_encceja_2023/DICIONÁRIO/Dicionário_Microdados_ENCCEJA_2023.xlsx"
+path_dicionario <- "dado/bruto/DICIONÁRIO/Dicionário_Microdados_ENCCEJA_2023.xlsx"
 
 # sheets do arquivo xlsx
 sheets_dicionario <- openxlsx::getSheetNames(path_dicionario); sheets_dicionario  
@@ -73,7 +73,7 @@ colRegular <- dicRegular$dicionario_de_variaveis_encceja_2023 %>%
 # Dados encceja 2023 ------------------------------------------------------
 
 ## Path das bases de dados
-pathRegular <- "dado/bruto/microdados_encceja_2023/DADOS/MICRODADOS_ENCCEJA_2023_REG_NAC.csv"
+pathRegular <- "dado/bruto/DADOS/MICRODADOS_ENCCEJA_2023_REG_NAC.csv"
 # pathPPL <- "dado/bruto/microdados_encceja_2023/DADOS/MICRODADOS_ENCCEJA_2023_PPL_NAC.csv"
 # pathPPLquestionario <- "dado/bruto/microdados_encceja_2023/DADOS/MICRODADOS_ENCCEJA_2023_PPL_NAC_QSE.csv"
 # pathProva <- "dado/bruto/microdados_encceja_2023/DADOS/MICRODADOS_ENCCEJA_2023_ITENS_PROVA.csv"
@@ -82,6 +82,11 @@ pathRegular <- "dado/bruto/microdados_encceja_2023/DADOS/MICRODADOS_ENCCEJA_2023
 dataRegular <- data.table::fread(pathRegular) %>% 
   janitor::clean_names() %>% 
   mutate(modalidade_encceja = "Nacional Regular")
+
+dataRegular %>% 
+  group_by() %>% 
+  
+## Amostragem
  
 # dataPPL <- data.table::fread(pathPPL,
 #                            nrows = 2000
@@ -190,44 +195,31 @@ dataRegular %>%
 
 dataRegularTratado <- dataRegular %>% 
   mutate(
-    t_in_aprovado_ch =
-      data.table::fifelse(in_prova_ch == 0, 0, in_aprovado_ch),
-    t_in_aprovado_cn =
-      data.table::fifelse(in_prova_cn == 0, 0, in_aprovado_cn),
-    t_in_aprovado_lc =
-      data.table::fifelse(in_prova_lc == 0, 0, in_aprovado_lc),
-    t_in_aprovado_mt =
-      data.table::fifelse(in_prova_mt == 0, 0, in_aprovado_mt),
+    t_in_aprovado_ch = tidyr::replace_na(in_aprovado_ch, 0),
+    t_in_aprovado_cn = tidyr::replace_na(in_aprovado_cn, 0),
+    t_in_aprovado_lc = tidyr::replace_na(in_aprovado_lc, 0),
+    t_in_aprovado_mt = tidyr::replace_na(in_aprovado_mt, 0),
     
-    t_soma_provas = 
+    t_solicitacoes_totais = 
       in_prova_lc +
       in_prova_ch +
       in_prova_cn +
       in_prova_mt
       ,
-    t_soma_aprovacao = 
+    t_aprovacoes_totais = 
       t_in_aprovado_lc +
       t_in_aprovado_ch +
       t_in_aprovado_cn +
       t_in_aprovado_mt,
     
-    t_certificado = 
-      data.table::fifelse((t_soma_provas != t_soma_aprovacao),
-                          0, 1),
-    
-    t_aprovado_nu_lc = 
-      data.table::fifelse(nu_nota_lc < 100 | is.na(nu_nota_lc), 0, 1),
-    t_aprovado_nu_redacao = 
-      data.table::fifelse(nu_nota_redacao < 5 | is.na(nu_nota_redacao), 0, 1),
-    
-    t_fx_etaria = case_when(
-      tp_faixa_etaria == 1 | tp_faixa_etaria == 2  ~ "menor de 18 anos", 
-      tp_faixa_etaria %in% c(3:11) ~ "entre 18 a 30 anos",
-      tp_faixa_etaria %in% c(12:15) ~ "entre 31 a 50 anos",
-      tp_faixa_etaria %in% c(12:20) ~ "acima de 51 anos"
-      # tp_faixa_etaria %in% c(16:19) ~ "entre 51 a 70 anos",
-      # tp_faixa_etaria == 20 ~ "maior que 70 anos"
-    )
+    t_resposta = 
+      data.table::fifelse(
+        t_solicitacoes_totais != t_aprovacoes_totais,
+         0, 1)
+    # t_aprovado_nu_lc = 
+    # data.table::fifelse(nu_nota_lc < 100 | is.na(nu_nota_lc), 0, 1),
+    # t_aprovado_nu_redacao = 
+    #  data.table::fifelse(nu_nota_redacao < 5 | is.na(nu_nota_redacao), 0, 1),
   )
 
 # aprovados e nao aprovados em redação e prova de linguagens
@@ -240,10 +232,5 @@ dataRegularTratado %>%
 dataRegularTratado %>% 
   filter(in_prova_mt == 1) %>% 
   group_by(t_certificado) %>% 
-  summarise(qntd = n())
-
-# dataRegularTratado  %>% 
-#   filter(in_aprovado_mt == 0 & in_prova_mt == 1 & t_certificado == 1) %>% 
-#   head(1) %>% 
-#   View
+  summarise(qntd = n()) 
 #   
